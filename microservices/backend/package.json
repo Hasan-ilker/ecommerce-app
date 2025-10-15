@@ -1,0 +1,13 @@
+{
+  "name": "ecommerce-backend",
+  "version": "1.0.0",
+  "description": "Simple Express backend for E-commerce app",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "cors": "^2.8.5"
+  }
+}

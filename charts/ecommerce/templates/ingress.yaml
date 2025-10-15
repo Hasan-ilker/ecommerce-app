@@ -1,0 +1,43 @@
+{{- if .Values.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Chart.Name }}-ingress
+  namespace: default
+  labels:
+    app: {{ .Chart.Name }}
+  annotations:
+    # 🔹 ALB (Application Load Balancer) yapılandırması
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+    alb.ingress.kubernetes.io/healthcheck-path: /health
+    alb.ingress.kubernetes.io/success-codes: "200,301,302"
+
+    # 🔹 Backend istekleri (/api/*) için özel yönlendirme (JSON action)
+    alb.ingress.kubernetes.io/actions.ecommerce-backend-action: >
+      {"type":"forward","forwardConfig":{"targetGroups":[{"serviceName":"ecommerce-backend","servicePort":4000,"weight":100}]}}
+
+spec:
+  ingressClassName: alb
+  rules:
+    - http:
+        paths:
+          # 🔹 Backend (API trafiği)
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: ecommerce-backend-action
+                port:
+                  name: use-annotation  # ✅ CRITICAL FIX!
+
+          # 🔹 Frontend (kalan tüm istekler)
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: ecommerce-frontend
+                port:
+                  number: 80
+{{- end }}

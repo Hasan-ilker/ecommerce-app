@@ -1,0 +1,36 @@
+# -----------------------
+# 🛠️ Backend Service
+# -----------------------
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Chart.Name }}-backend
+  labels:
+    app: {{ .Chart.Name }}-backend
+spec:
+  type: ClusterIP
+  selector:
+    app: {{ .Chart.Name }}-backend
+  ports:
+    - name: http
+      port: 4000
+      targetPort: {{ .Values.backend.port }}
+
+---
+# -----------------------
+# 💻 Frontend Service
+# -----------------------
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Chart.Name }}-frontend
+  labels:
+    app: {{ .Chart.Name }}-frontend
+spec:
+  type: ClusterIP
+  selector:
+    app: {{ .Chart.Name }}-frontend
+  ports:
+    - name: http
+      port: 80
+      targetPort: {{ .Values.frontend.port }}

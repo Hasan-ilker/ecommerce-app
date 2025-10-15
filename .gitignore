@@ -1,0 +1,10 @@
+**/.terraform/
+**/terraform.tfstate*
+**/*.tfvars
+**/.terraform.lock.hcl
+**/.tfplan
+**/*.pem
+**/kubeconfig
+**/node_modules/
+**/.env*
+**/.DS_Store

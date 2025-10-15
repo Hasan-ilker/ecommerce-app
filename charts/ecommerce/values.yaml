@@ -1,0 +1,51 @@
+replicaCount: 1
+
+backend:
+  name: backend
+  port: 4000
+  image:
+    repository: "952732862406.dkr.ecr.us-east-1.amazonaws.com/e-commerce-app-backend"
+    tag: "latest"
+    pullPolicy: IfNotPresent
+
+frontend:
+  name: frontend
+  port: 80
+  image:
+    repository: "952732862406.dkr.ecr.us-east-1.amazonaws.com/e-commerce-app-frontend"
+    tag: "latest"
+    pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: true
+  className: alb
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+    alb.ingress.kubernetes.io/healthcheck-path: /
+    alb.ingress.kubernetes.io/success-codes: "200,301,302"
+  hosts:
+    - host: ""
+      paths:
+        # 🔹 BACKEND ROUTE - BU EKSİKTİ!
+        - path: /api
+          pathType: Prefix
+          backend:
+            service:
+              name: ecommerce-backend
+              port:
+                number: 4000
+        # 🔹 FRONTEND ROUTE
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: ecommerce-frontend
+              port:
+                number: 80
+  tls: []

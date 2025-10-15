@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>E-Commerce App</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>🛒 E-Commerce App</h1>
+  </header>
+
+  <main>
+    <section class="form-section">
+      <h2>Add New Product</h2>
+      <input type="text" id="productName" placeholder="Product Name" />
+      <input type="number" id="productPrice" placeholder="Price ($)" />
+      <button onclick="addProduct()">➕ Add Product</button>
+    </section>
+
+    <section class="products" id="products"></section>
+  </main>
+
+  <footer>
+    <p>© 2025 Hasan İlker Ünver — E-Commerce Demo</p>
+  </footer>
+
+  <script>
+    // ✅ Kubernetes ortamı için düzeltildi
+    const API_URL = "/api/products";
+
+    async function fetchProducts() {
+      const res = await fetch(API_URL);
+      const data = await res.json();
+      const container = document.getElementById("products");
+      container.innerHTML = "";
+      data.forEach(p => {
+        const div = document.createElement("div");
+        div.className = "card";
+        div.innerHTML = `
+          <h3>${p.name}</h3>
+          <p>$${p.price}</p>
+          <button onclick="deleteProduct(${p.id})">🗑 Delete</button>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    async function addProduct() {
+      const name = document.getElementById("productName").value.trim();
+      const price = document.getElementById("productPrice").value.trim();
+      if (!name || !price) return alert("Please fill in both fields!");
+
+      await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, price })
+      });
+
+      document.getElementById("productName").value = "";
+      document.getElementById("productPrice").value = "";
+      fetchProducts();
+    }
+
+    async function deleteProduct(id) {
+      await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+      fetchProducts();
+    }
+
+    fetchProducts();
+  </script>
+</body>
+</html>

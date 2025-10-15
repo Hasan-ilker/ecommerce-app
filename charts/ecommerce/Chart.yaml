@@ -1,0 +1,10 @@
+apiVersion: v2
+name: ecommerce
+description: A Helm chart for deploying the E-commerce application (frontend + backend) on Kubernetes
+type: application
+version: 0.1.0
+appVersion: "1.0"
+
+maintainers:
+  - name: Hasan Ilker Ünver
+    email: hasanilkerunver@gmail.com
